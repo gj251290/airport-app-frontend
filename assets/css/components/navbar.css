@@ -8,6 +8,7 @@
   backdrop-filter: blur(20px);
   box-shadow: var(--shadow-sm);
   border-bottom: 1px solid rgba(195, 198, 214, 0.15);
+  height: 5rem;
 }
 
 .navbar__container {

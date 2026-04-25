@@ -2,8 +2,8 @@ use dioxus::prelude::*;
 
 use crate::pages::landing::Landing;
 
-const GLOBAL_CSS: Asset = asset!("/assets/main.css");
-const VARIABLES_CSS: Asset = asset!("/assets/variables.css");
+const GLOBAL_CSS: Asset = asset!("/assets/css/main.css");
+const VARIABLES_CSS: Asset = asset!("/assets/css/variables.css");
 
 #[derive(Routable, Clone)]
 pub enum Route {
