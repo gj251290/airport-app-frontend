@@ -1,0 +1,72 @@
+.destination-card {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.destination-card:hover {
+  transform: translateY(-4px);
+}
+
+.destination-card__image-wrapper {
+  position: relative;
+  height: 24rem;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  margin-bottom: var(--space-md);
+}
+
+.destination-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.destination-card:hover .destination-card__image {
+  transform: scale(1.05);
+}
+
+.destination-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+}
+
+.destination-card__badge {
+  position: absolute;
+  bottom: var(--space-lg);
+  left: var(--space-lg);
+  color: white;
+}
+
+.destination-card__country {
+  font-size: 0.625rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+  display: block;
+  margin-bottom: var(--space-xs);
+}
+
+.destination-card__city {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.destination-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.destination-card__label {
+  font-size: 0.875rem;
+  color: var(--on-surface-variant);
+}
+
+.destination-card__price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
+}

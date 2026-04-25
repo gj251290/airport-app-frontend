@@ -1,0 +1,86 @@
+:root {
+  /* Primary */
+  --primary: #00429d;
+  --primary-container: #0a58ca;
+  --primary-fixed: #d9e2ff;
+  --primary-fixed-dim: #b0c6ff;
+  --on-primary: #ffffff;
+  --on-primary-container: #ccd8ff;
+  --on-primary-fixed: #001945;
+  --on-primary-fixed-variant: #00419d;
+  --inverse-primary: #b0c6ff;
+  --surface-tint: #0958ca;
+
+  /* Secondary */
+  --secondary: #4c5d8a;
+  --secondary-container: #b9cbfe;
+  --secondary-fixed: #d9e2ff;
+  --secondary-fixed-dim: #b4c6f8;
+  --on-secondary: #ffffff;
+  --on-secondary-container: #435581;
+  --on-secondary-fixed: #031942;
+  --on-secondary-fixed-variant: #344670;
+
+  /* Tertiary */
+  --tertiary: #7f2b00;
+  --tertiary-container: #a63b01;
+  --tertiary-fixed: #ffdbce;
+  --tertiary-fixed-dim: #ffb599;
+  --on-tertiary: #ffffff;
+  --on-tertiary-container: #ffcebc;
+  --on-tertiary-fixed: #370e00;
+  --on-tertiary-fixed-variant: #7f2b00;
+
+  /* Error */
+  --error: #ba1a1a;
+  --error-container: #ffdad6;
+  --on-error: #ffffff;
+  --on-error-container: #93000a;
+
+  /* Surface */
+  --background: #f8f9ff;
+  --on-background: #121c28;
+  --surface: #f8f9ff;
+  --on-surface: #121c28;
+  --surface-variant: #d9e3f4;
+  --on-surface-variant: #424653;
+  --inverse-surface: #27313e;
+  --inverse-on-surface: #eaf1ff;
+  --surface-dim: #d1dbec;
+  --surface-bright: #f8f9ff;
+  --surface-container-lowest: #ffffff;
+  --surface-container-low: #eef4ff;
+  --surface-container: #e5eeff;
+  --surface-container-high: #dfe9fa;
+  --surface-container-highest: #d9e3f4;
+
+  /* Outline */
+  --outline: #737785;
+  --outline-variant: #c3c6d6;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(18, 28, 40, 0.04);
+  --shadow-md: 0 4px 12px rgba(18, 28, 40, 0.06);
+  --shadow-lg: 0 10px 15px rgba(18, 28, 40, 0.08);
+  --shadow-xl: 0 20px 25px rgba(18, 28, 40, 0.1);
+  --shadow-primary: 0 4px 14px rgba(0, 66, 157, 0.25);
+
+  /* Typography */
+  --font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Border radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+}
