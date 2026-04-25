@@ -1,0 +1,381 @@
+diff --git a/assets/css/components/datepicker.css b/assets/css/components/datepicker.css
+index 0a1b2d2..136563a 100644
+--- a/assets/css/components/datepicker.css
++++ b/assets/css/components/datepicker.css
+@@ -40,39 +40,83 @@
+   box-shadow: 0 0 0 2px var(--primary);
+ }
+ 
+-.date-range-picker__calendar {
++.calendar-overlay {
++  position: fixed;
++  top: 0;
++  left: 0;
++  right: 0;
++  bottom: 0;
++  z-index: 999;
++  background: rgba(0, 0, 0, 0.1);
++}
++
++.date-range-picker__calendar-container {
+   position: absolute;
+   z-index: 1000;
+   background: var(--surface-container-lowest);
+   border-radius: var(--radius-xl);
+   box-shadow: var(--shadow-lg);
+-  padding: var(--space-md);
+-  width: 280px;
++  padding: var(--space-lg);
+   margin-top: 8px;
++  width: 620px;
++  max-width: 90vw;
++  left: 0;
+ }
+ 
+-.calendar__header {
++.calendar__navigation {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   margin-bottom: var(--space-md);
+ }
+ 
+-.calendar__month {
++.calendar__navigation button {
++  background: var(--surface-container-high);
++  border: none;
++  border-radius: var(--radius-full);
++  width: 32px;
++  height: 32px;
++  font-size: 1.2rem;
++  font-weight: bold;
++  cursor: pointer;
++  transition: background 0.2s;
++}
++
++.calendar__navigation button:hover {
++  background: var(--surface-container-highest);
++}
++
++.calendar__months {
++  display: flex;
++  gap: var(--space-xl);
++  flex-wrap: wrap;
++  justify-content: center;
++}
++
++.calendar-month {
++  flex: 1;
++  min-width: 240px;
++}
++
++.calendar-month__header {
+   font-weight: 600;
++  text-align: center;
++  margin-bottom: var(--space-sm);
++  font-size: 1rem;
++  color: var(--on-surface);
+ }
+ 
+-.calendar__weekdays {
++.calendar-month__weekdays {
+   display: grid;
+   grid-template-columns: repeat(7, 1fr);
+   text-align: center;
+   font-size: 0.75rem;
+   font-weight: 500;
+   color: var(--outline);
+-  margin-bottom: var(--space-sm);
++  margin-bottom: var(--space-xs);
+ }
+ 
+-.calendar__days {
++.calendar-month__days {
+   display: grid;
+   grid-template-columns: repeat(7, 1fr);
+   gap: 4px;
+@@ -87,6 +131,13 @@
+   background: transparent;
+   font-size: 0.875rem;
+   cursor: pointer;
++  transition:
++    background 0.2s,
++    color 0.2s;
++}
++
++.calendar__day:hover:not(:disabled) {
++  background: var(--surface-container-high);
+ }
+ 
+ .calendar__day:disabled {
+@@ -94,24 +145,28 @@
+   cursor: not-allowed;
+ }
+ 
+-.calendar__day--selected {
++.calendar__day--empty {
++  aspect-ratio: 1;
++}
++
++.calendar__day--depart {
+   background: var(--primary);
+   color: var(--on-primary);
+ }
+ 
++.calendar__day--return {
++  background: var(--primary-container);
++  color: var(--on-primary-container);
++}
++
++.calendar__day--in-range {
++  background: var(--primary-fixed-dim);
++  color: var(--on-primary-fixed);
++}
++
+ .date-range-picker__error {
+   font-size: 0.75rem;
+   color: var(--error);
+   margin-top: var(--space-xs);
+   margin-left: var(--space-sm);
+ }
+-
+-.calendar-overlay {
+-  position: fixed;
+-  top: 0;
+-  left: 0;
+-  right: 0;
+-  bottom: 0;
+-  z-index: 999;
+-  background: transparent; /* o rgba(0,0,0,0.1) si quieres un ligero oscurecimiento */
+-}
+diff --git a/src/components/datepicker.rs b/src/components/datepicker.rs
+index 76f8b9a..ecdd1b5 100644
+--- a/src/components/datepicker.rs
++++ b/src/components/datepicker.rs
+@@ -19,7 +19,6 @@ pub fn DateRangePicker(props: DateRangePickerProps) -> Element {
+     let mut show_calendar = use_signal(|| false);
+     let mut selecting_return = use_signal(|| false);
+     let mut current_month = use_signal(|| Local::now().naive_local().date());
+-
+     let today = Local::now().naive_local().date();
+ 
+     let depart_parsed = props
+@@ -35,22 +34,37 @@ pub fn DateRangePicker(props: DateRangePickerProps) -> Element {
+     let on_return = props.on_return_select.clone();
+     let show_return_flag = props.show_return;
+ 
+-    // Construir los días del calendario
+-    let days_elements = {
+-        let year = current_month().year();
+-        let month = current_month().month();
+-        let last_day = NaiveDate::from_ymd_opt(year, month + 1, 1)
++    // Función auxiliar para obtener los días de un mes
++    let get_days = |year: i32, month: u32| -> Vec<NaiveDate> {
++        let first = NaiveDate::from_ymd_opt(year, month, 1).unwrap();
++        let last = NaiveDate::from_ymd_opt(year, month + 1, 1)
+             .unwrap_or_else(|| NaiveDate::from_ymd_opt(year + 1, 1, 1).unwrap())
+             - Duration::days(1);
++        (first.day()..=last.day())
++            .map(|d| NaiveDate::from_ymd_opt(year, month, d).unwrap())
++            .collect()
++    };
++
++    // Función para renderizar un mes (devuelve Vec<VNode>)
++    let render_month = |year: i32, month: u32| {
++        let days = get_days(year, month);
++        let first_weekday = days.first().unwrap().weekday().num_days_from_monday();
++        let mut cells = Vec::new();
++
++        // celdas vacías iniciales
++        for _ in 0..first_weekday {
++            cells.push(rsx! { div { class: "calendar__day--empty", "" } });
++        }
+ 
+-        let mut elements = Vec::new();
+-        for day in 1..=last_day.day() {
+-            let date = NaiveDate::from_ymd_opt(year, month, day).unwrap();
+-            let disabled = date < today;
+-            let selected = if !selecting_return() {
+-                depart_parsed == Some(date)
++        for day_date in days {
++            let day = day_date.day();
++            let disabled = day_date < today;
++            let is_depart = depart_parsed == Some(day_date);
++            let is_return = return_parsed == Some(day_date);
++            let in_range = if let (Some(dep), Some(ret)) = (depart_parsed, return_parsed) {
++                day_date > dep && day_date < ret
+             } else {
+-                return_parsed == Some(date)
++                false
+             };
+ 
+             let mut show_cal = show_calendar.clone();
+@@ -64,7 +78,7 @@ pub fn DateRangePicker(props: DateRangePickerProps) -> Element {
+                     return;
+                 }
+                 if !select_ret() {
+-                    let date_str = date.format("%Y-%m-%d").to_string();
++                    let date_str = day_date.format("%Y-%m-%d").to_string();
+                     on_depart_clone.call(date_str);
+                     if show_return {
+                         select_ret.set(true);
+@@ -72,27 +86,30 @@ pub fn DateRangePicker(props: DateRangePickerProps) -> Element {
+                         show_cal.set(false);
+                     }
+                 } else {
+-                    if let Some(depart) = depart_parsed {
+-                        if date >= depart {
+-                            let date_str = date.format("%Y-%m-%d").to_string();
++                    if let Some(dep) = depart_parsed {
++                        if day_date >= dep {
++                            let date_str = day_date.format("%Y-%m-%d").to_string();
+                             on_return_clone.call(date_str);
+                             show_cal.set(false);
+                             select_ret.set(false);
+                         }
+                     } else {
+-                        show_cal.set(false);
+                         select_ret.set(false);
+                     }
+                 }
+             };
+ 
+-            let class = if selected {
+-                "calendar__day--selected"
++            let class = if is_depart {
++                "calendar__day--depart"
++            } else if is_return {
++                "calendar__day--return"
++            } else if in_range {
++                "calendar__day--in-range"
+             } else {
+                 "calendar__day"
+             };
+ 
+-            elements.push(rsx! {
++            cells.push(rsx! {
+                 button {
+                     class: class,
+                     disabled: disabled,
+@@ -101,14 +118,33 @@ pub fn DateRangePicker(props: DateRangePickerProps) -> Element {
+                 }
+             });
+         }
+-        elements
++
++        let month_name = NaiveDate::from_ymd_opt(year, month, 1)
++            .unwrap()
++            .format("%B %Y")
++            .to_string();
++        rsx! {
++            div { class: "calendar-month",
++                div { class: "calendar-month__header", "{month_name}" }
++                div { class: "calendar-month__weekdays",
++                    span { "L" }, span { "M" }, span { "M" }, span { "J" }, span { "V" }, span { "S" }, span { "D" }
++                }
++                div { class: "calendar-month__days", { cells.into_iter() } }
++            }
++        }
+     };
+ 
+-    let mut change_month = move |delta: i32| {
+-        let new_month = current_month() + Duration::days(if delta > 0 { 30 } else { -30 });
+-        current_month.set(new_month);
++    let mut change_month_pair = move |delta: i32| {
++        let new = current_month() + Duration::days(if delta > 0 { 30 } else { -30 });
++        current_month.set(new);
+     };
+ 
++    let year1 = current_month().year();
++    let month1 = current_month().month();
++    let next_month = current_month() + Duration::days(30);
++    let year2 = next_month.year();
++    let month2 = next_month.month();
++
+     rsx! {
+         document::Stylesheet { href: CSS }
+ 
+@@ -148,7 +184,6 @@ pub fn DateRangePicker(props: DateRangePickerProps) -> Element {
+                 }
+             }
+             if show_calendar() {
+-                // Overlay para cerrar al hacer clic fuera
+                 div {
+                     class: "calendar-overlay",
+                     onclick: move |_| {
+@@ -156,24 +191,14 @@ pub fn DateRangePicker(props: DateRangePickerProps) -> Element {
+                         selecting_return.set(false);
+                     },
+                 }
+-                div {
+-                    class: "date-range-picker__calendar",
+-                    div { class: "calendar__header",
+-                        button {
+-                            onclick: move |_| change_month(-1),
+-                            "<"
+-                        }
+-                        span { class: "calendar__month", "{current_month().format(\"%B %Y\")}" }
+-                        button {
+-                            onclick: move |_| change_month(1),
+-                            ">"
+-                        }
+-                    }
+-                    div { class: "calendar__weekdays",
+-                        span { "L" }, span { "M" }, span { "M" }, span { "J" }, span { "V" }, span { "S" }, span { "D" }
++                div { class: "date-range-picker__calendar-container",
++                    div { class: "calendar__navigation",
++                        button { onclick: move |_| change_month_pair(-1), "←" }
++                        button { onclick: move |_| change_month_pair(1), "→" }
+                     }
+-                    div { class: "calendar__days",
+-                        { days_elements.into_iter() }
++                    div { class: "calendar__months",
++                        { render_month(year1, month1) }
++                        { render_month(year2, month2) }
+                     }
+                 }
+             }
+diff --git a/src/components/mod.rs b/src/components/mod.rs
+index 28974fe..90f07d0 100644
+--- a/src/components/mod.rs
++++ b/src/components/mod.rs
+@@ -1,6 +1,7 @@
+ pub mod airport_autocomplete;
+ pub mod card;
+ pub mod datepicker;
++pub mod footer;
+ pub mod form;
+ pub mod navbar;
+ pub mod passenger;
+diff --git a/src/pages/landing.rs b/src/pages/landing.rs
+index 59eb220..8d3595a 100644
+--- a/src/pages/landing.rs
++++ b/src/pages/landing.rs
+@@ -1,4 +1,5 @@
+ use crate::components::card::Card;
++use crate::components::footer::Footer;
+ use crate::components::form::NewsletterForm;
+ use crate::components::navbar::Navbar;
+ use crate::components::search::SearchWidget;
+@@ -77,20 +78,7 @@ pub fn Landing() -> Element {
+                 }
+             }
+ 
+-            footer { class: "footer",
+-                div { class: "footer__container",
+-                    div { class: "footer__brand",
+-                        span { class: "footer__logo", "SkyBook" }
+-                        p { class: "footer__copyright", "© 2026 SkyBook Aviation. Todos los datos de vuelo están protegidos." }
+-                    }
+-                    div { class: "footer__links",
+-                        a { href: "#", "Política de privacidad" }
+-                        a { href: "#", "Condiciones del servicio" }
+-                        a { href: "#", "Normas" }
+-                        a { href: "#", "Contacto" }
+-                    }
+-                }
+-            }
++            Footer {}
+         }
+     }
+ }
