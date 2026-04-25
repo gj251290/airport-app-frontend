@@ -1,0 +1,67 @@
+.newsletter {
+  background: var(--surface-container);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  border: 1px solid rgba(195, 198, 214, 0.1);
+}
+
+@media (min-width: 768px) {
+  .newsletter {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.newsletter__content {
+  max-width: 28rem;
+}
+
+.newsletter__title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+  color: var(--on-surface);
+}
+
+.newsletter__text {
+  color: var(--on-surface-variant);
+}
+
+.newsletter__form {
+  display: flex;
+  gap: var(--space-md);
+  width: 100%;
+  max-width: 28rem;
+}
+
+.newsletter__input {
+  flex: 1;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--surface-container-lowest);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  outline: none;
+  transition: box-shadow 0.2s;
+}
+
+.newsletter__input:focus {
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+.newsletter__button {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-weight: 700;
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-lg);
+  transition: opacity 0.2s;
+}
+
+.newsletter__button:hover {
+  opacity: 0.9;
+}
