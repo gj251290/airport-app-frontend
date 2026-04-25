@@ -10,6 +10,17 @@ edition = "2021"
 dioxus = { version = "0.7.1", features = ["router"] }
 dioxus-free-icons = { version = "0.10.0", features = ["lucide"] }
 dioxus-router = "0.7.6"
+gloo-timers = { version = "0.4", features = ["futures"] }
+wasm-bindgen-futures = "0.4"
+serde = "1.0.228"
+chrono = { version = "0.4", features = ["serde"] }
+web-sys = { version = "0.3.95", features = [
+  "Window",
+  "EventTarget",
+  "MouseEvent",
+  "HtmlElement",
+] }
+wasm-bindgen = "0.2.118"
 
 
 [features]

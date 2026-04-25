@@ -14,7 +14,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
 }
 
 .hero__background {
@@ -39,7 +38,7 @@
 
 .hero__container {
   position: relative;
-  z-index: 2;
+  z-index: 10;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
