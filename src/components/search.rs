@@ -6,7 +6,7 @@ use dioxus_free_icons::Icon;
 
 #[component]
 pub fn SearchWidget() -> Element {
-    const CSS: Asset = asset!("/assets/components/search.css");
+    const CSS: Asset = asset!("/assets/css/components/search.css");
 
     rsx! {
         document::Stylesheet { href: CSS }

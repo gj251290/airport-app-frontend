@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 
 #[component]
 pub fn NewsletterForm() -> Element {
-    const CSS: Asset = asset!("/assets/components/form.css");
+    const CSS: Asset = asset!("/assets/css/components/form.css");
 
     rsx! {
         document::Stylesheet { href: CSS }

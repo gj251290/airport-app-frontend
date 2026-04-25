@@ -10,7 +10,7 @@ pub struct CardProps {
 
 #[component]
 pub fn Card(props: CardProps) -> Element {
-    const CSS: Asset = asset!("/assets/components/card.css");
+    const CSS: Asset = asset!("/assets/css/components/card.css");
 
     rsx! {
         document::Stylesheet { href: CSS }

@@ -9,7 +9,7 @@ use dioxus_free_icons::Icon;
 
 #[component]
 pub fn Landing() -> Element {
-    const CSS: Asset = asset!("/assets/pages/landing.css");
+    const CSS: Asset = asset!("/assets/css/pages/landing.css");
 
     rsx! {
         document::Stylesheet { href: CSS }
@@ -17,7 +17,7 @@ pub fn Landing() -> Element {
         div { class: "landing",
             Navbar {}
             main { class: "landing__main",
-                // Hero section
+
                 section { class: "hero",
                     div { class: "hero__background" }
                     div { class: "hero__overlay" }
@@ -31,7 +31,7 @@ pub fn Landing() -> Element {
                         SearchWidget {}
                     }
                 }
-                // Trending Destinations
+
                 section { class: "destinations",
                     div { class: "destinations__header",
                         div { class: "destinations__header-left",
@@ -47,7 +47,6 @@ pub fn Landing() -> Element {
                                     height: 20,
                                     class: "arrow__right",
                                 }
-
                             }
                         }
                     }
@@ -72,12 +71,12 @@ pub fn Landing() -> Element {
                         },
                     }
                 }
-                // Newsletter
+
                 section { class: "newsletter-section",
                     NewsletterForm {}
                 }
             }
-            // Footer (simplificado)
+
             footer { class: "footer",
                 div { class: "footer__container",
                     div { class: "footer__brand",

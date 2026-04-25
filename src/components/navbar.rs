@@ -2,7 +2,7 @@ use dioxus::prelude::*;
 
 #[component]
 pub fn Navbar() -> Element {
-    const CSS: Asset = asset!("/assets/components/navbar.css");
+    const CSS: Asset = asset!("/assets/css/components/navbar.css");
 
     rsx! {
         document::Stylesheet { href: CSS }
