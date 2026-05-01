@@ -2,21 +2,18 @@
 name = "airport-app-frontend"
 
 [web.app]
-
 # HTML title tag content
 title = "SkyBook - Find Your Next Adventure"
+base_path = "/"
 
-# include `assets` in web platform
 [web.resource]
-
-# Additional CSS style files
-style = []
-
-# Additional JavaScript files
+# CSS global y variables
+style = ["assets/main.css"]
 script = []
 
 [web.resource.dev]
-
-# Javascript code file
-# serve: [dev-server] only
+# Archivos JS solo en desarrollo (si los necesitas)
 script = []
+
+
+
